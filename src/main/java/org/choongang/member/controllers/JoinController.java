@@ -18,10 +18,19 @@ public class JoinController extends AbstractController {
 
     @Override
     public void prompt() {
-        System.out.print("아이디: ");
-        String userId = sc.nextLine();
-        System.out.println(userId);
+        String userId = promptWithValidation("아이디(6자리 이상): ", s -> s.length() >= 6);
+
+        String userPw = promptWithValidation("비밀번호(8자리 이상): ", s -> s.length() >= 8);
+
+        String confirmPw = promptWithValidation("비밀번호 확인: ", s -> {
+           boolean match = s.equals(userPw);
+            System.err.println("\n비밀번호가 일치하지 않습니다.");
+            System.out.println("비밀번호 확인: ");
+           return match;
+        });
+
+        String userNm = promptWithValidation("회원명: ", s -> !s.isBlank());
+
+        System.out.printf("userId=%s, userPw=%s, confirmPw=%s, userNm=%s%n", userId, userPw, confirmPw, userNm);
     }
-
-
 }
