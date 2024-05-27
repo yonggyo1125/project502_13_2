@@ -2,6 +2,9 @@ package org.choongang.template;
 
 import org.choongang.global.constants.Menu;
 import org.choongang.template.main.MainTpl;
+import org.choongang.template.member.JoinTpl;
+import org.choongang.template.member.LoginTpl;
+import org.choongang.template.member.MypageTpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,9 +36,9 @@ public class Templates {
         }
 
         switch (menu) {
-            case JOIN:
-            case LOGIN:
-            case MYPAGE:
+            case JOIN: tpl = new JoinTpl();
+            case LOGIN: tpl = new LoginTpl();
+            case MYPAGE: tpl = new MypageTpl();
             default: tpl = new MainTpl();
         }
 
