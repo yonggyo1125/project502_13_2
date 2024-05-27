@@ -37,6 +37,7 @@ public abstract class AbstractController implements Controller {
             int m = Integer.parseInt(menu);
             change(m); // 메뉴 변경
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("메뉴는 숫자로 입력하세요.");
         }
     }

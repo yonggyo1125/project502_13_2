@@ -4,6 +4,7 @@ import org.choongang.global.Controller;
 import org.choongang.global.ControllerLocator;
 import org.choongang.global.constants.Menu;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class MemberControllerLocator implements ControllerLocator {
@@ -12,7 +13,9 @@ public class MemberControllerLocator implements ControllerLocator {
 
     private Map<Menu, Controller> controllers;
 
-    private MemberControllerLocator() {}
+    private MemberControllerLocator() {
+        controllers = new HashMap<>();
+    }
 
     public static ControllerLocator getInstance() {
         if (instance == null) {
@@ -26,7 +29,7 @@ public class MemberControllerLocator implements ControllerLocator {
     @Override
     public Controller find(Menu menu) {
         Controller controller = controllers.get(menu);
-        if (menu != null) {
+        if (controller != null) {
             return controller;
         }
 
