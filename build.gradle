@@ -1,9 +1,12 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group = 'org.choongang'
 version = '1.0-SNAPSHOT'
+
+mainClassName = 'org.choongang.Application'
 
 repositories {
     mavenCentral()
@@ -16,4 +19,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    manifest.attributes['Main-Class'] = 'org.choongang.Application'
 }
