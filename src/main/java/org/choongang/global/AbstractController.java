@@ -17,7 +17,8 @@ public abstract class AbstractController implements Controller {
      * 상단 공통 출력 부분
      */
     public void common() {
-
+        System.out.println("학생관리 프로그램 Ver1.0");
+        System.out.println("-----------------------------------------");
     }
 
     /**
