@@ -8,6 +8,19 @@ import org.choongang.member.controllers.JoinController;
 import org.choongang.member.controllers.LoginController;
 
 public class MainRouter implements Router {
+
+    private static Router instance;
+
+    private MainRouter() {}
+
+    public static Router getInstance() {
+        if (instance == null) {
+            instance = new MainRouter();
+        }
+
+        return instance;
+    }
+
     @Override
     public void change(Menu menu) {
         Controller controller = null;

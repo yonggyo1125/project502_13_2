@@ -1,6 +1,7 @@
 package org.choongang.global;
 
 import org.choongang.global.constants.Menu;
+import org.choongang.main.MainRouter;
 
 import java.util.Scanner;
 
@@ -59,5 +60,6 @@ public abstract class AbstractController implements Controller {
         }
 
         // 메뉴 컨트롤러 변경 처리 - Router
+
     }
 }
