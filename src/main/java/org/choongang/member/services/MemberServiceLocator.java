@@ -7,6 +7,14 @@ import org.choongang.global.constants.Menu;
 
 public class MemberServiceLocator extends AbstractServiceLocator {
 
+    public static ServiceLocator getInstance() {
+        if (instance == null) {
+            instance = new MemberServiceLocator();
+        }
+
+        return instance;
+    }
+
     @Override
     public Service find(Menu menu) {
         Service service = services.get(menu);
