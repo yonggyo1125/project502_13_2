@@ -29,7 +29,6 @@ public abstract class AbstractController implements Controller {
      *  - 숫자: 메뉴 항목
      */
     public void prompt() {
-        System.out.println(Templates.getInstance().doubleLine());
         System.out.print("메뉴 선택: ");
         String menu = sc.nextLine();
         if (menu.equals("q") || menu.equals("quit") || menu.equals("exit")) {
@@ -56,6 +55,7 @@ public abstract class AbstractController implements Controller {
     protected String promptWithValidation(String message, Predicate<String> predicate) {
         String str = null;
         do {
+            System.out.print(message);
             str = sc.nextLine();
         } while(!predicate.test(str));
 

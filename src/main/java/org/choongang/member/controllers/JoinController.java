@@ -2,6 +2,7 @@ package org.choongang.member.controllers;
 
 import org.choongang.global.AbstractController;
 import org.choongang.global.constants.Menu;
+import org.choongang.main.MainRouter;
 import org.choongang.template.Templates;
 
 import java.util.function.Predicate;
@@ -24,13 +25,27 @@ public class JoinController extends AbstractController {
 
         String confirmPw = promptWithValidation("비밀번호 확인: ", s -> {
            boolean match = s.equals(userPw);
-            System.err.println("\n비밀번호가 일치하지 않습니다.");
-            System.out.println("비밀번호 확인: ");
+           if (!match) {
+               System.err.println("\n비밀번호가 일치하지 않습니다.");
+           }
+
            return match;
         });
 
         String userNm = promptWithValidation("회원명: ", s -> !s.isBlank());
 
-        System.out.printf("userId=%s, userPw=%s, confirmPw=%s, userNm=%s%n", userId, userPw, confirmPw, userNm);
+        RequestJoin form = RequestJoin.builder()
+                .userId(userId)
+                .userPw(userPw)
+                .confirmPw(confirmPw)
+                .userNm(userNm)
+                .build();
+
+        // 회원 가입 처리...
+        System.out.println(form);
+
+        // 회원 가입 성공시 -> 로그인화면 이동
+        MainRouter.getInstance().change(Menu.LOGIN);
+
     }
 }
