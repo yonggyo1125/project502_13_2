@@ -46,4 +46,12 @@ public class Templates {
 
         return tpl;
     }
+
+    public String line() {
+        return "-----------------------------------\n";
+    }
+
+    public String doubleLine() {
+        return "===================================\n";
+    }
 }
