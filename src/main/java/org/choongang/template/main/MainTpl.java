@@ -4,7 +4,7 @@ import org.choongang.template.Template;
 
 public class MainTpl implements Template {
     @Override
-    public String getTpl(String tplName) {
+    public String getTpl() {
         StringBuffer sb = new StringBuffer(2000);
 
         sb.append("메뉴를 선택하세요.\n")
