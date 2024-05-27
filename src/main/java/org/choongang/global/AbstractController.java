@@ -60,6 +60,6 @@ public abstract class AbstractController implements Controller {
         }
 
         // 메뉴 컨트롤러 변경 처리 - Router
-
+        MainRouter.getInstance().change(menu);
     }
 }
