@@ -19,7 +19,7 @@ public class JoinController extends AbstractController {
     public void show() {
         Templates.getInstance().render(Menu.JOIN);
     }
-
+ 
     @Override
     public void prompt() {
         String userId = promptWithValidation("아이디(6자리 이상): ", s -> s.length() >= 6);

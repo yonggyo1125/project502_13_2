@@ -26,6 +26,7 @@ public class Templates {
     }
 
     public void render(Menu menu) {
+
         System.out.println(find(menu).getTpl());
     }
 
