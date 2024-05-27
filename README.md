@@ -122,8 +122,20 @@ public class Member {
         <mapper resource="org/choongang/member/mapper/MemberMapper.xml" />
     </mappers>
 </configuration>
-
 ```
+
+> MemberMapper 인터페이스 추가 
+> src/java/org/choongang/member/mapper/MemberMapper.java
+> MemberMapper.xml과 동일한 패키지 경로, 동일 파일명으로 인터페이스를 만들면 MemberMapper에 정의한 select, insert, update, delete 태그의 id명으로 추상 메서드만 만들어도 서로 연결이 됩니다.
+
+```java
+package org.choongang.member.mapper;
+
+public interface MemberMapper {
+    
+}
+```
+
 
 #### 로거 설정(slf4j)
 
@@ -164,6 +176,16 @@ dependencies {
 </configuration>
 ```
 
+### 회원 가입
+
+> MemberMapper.xml에 회원 관련 SQL 추가
+> resources/org/choongang/member/mapper/MemberMapper.xml
+```groovy
+
+```
+
+
+### 로그인 
 
 
 
