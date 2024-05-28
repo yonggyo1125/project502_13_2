@@ -176,6 +176,44 @@ dependencies {
 </configuration>
 ```
 
+### 마이바티스 설정 반영 및 SqlSession 객체 생성 소스 구현 
+
+> org/choongang/global/configs/DBConn.java
+
+```java
+package org.choongang.global.configs;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import java.io.IOException;
+import java.io.Reader;
+
+public class DBConn {
+    private static SqlSessionFactory factory;
+
+    static {
+        try {
+            Reader reader = Resources.getResourceAsReader("org/choongang/global/configs/mybatis-config.xml");
+            factory = new SqlSessionFactoryBuilder().build(reader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static SqlSession getSession(boolean autoCommit) {
+        return factory.openSession(autoCommit);
+    }
+
+    public static SqlSession getSession() {
+        return getSession(true);
+    }
+}
+```
+
+
 ### 회원 가입
 
 > MemberMapper.xml에 회원 관련 SQL 추가
@@ -251,7 +289,7 @@ dependencies {
         </selectKey>
 
         INSERT INTO MEMBER (USER_NO, USER_ID, USER_PW, USER_NM)
-        VALUES {#{userNo}, #{userId}, #{userPw}, #{userNm})
+        VALUES (#{userNo}, #{userId}, #{userPw}, #{userNm})
     </insert>
 
     <!-- 회원 정보 수정 -->
@@ -566,11 +604,28 @@ public class MemberServiceLocator extends AbstractServiceLocator {
 #### 회원가입 서비스 기능 테스트 
 
 
+- 회원 가입 성공시 예외 발생 없음
+> src/test/java/.../member/services/JoinServiceTest.java
 
 ```java
+package org.choongang.global.validators;
 
+/**
+ * 필수 항목 체크
+ *
+ */
+public interface RequiredValidator {
+    default void checkRequired(String str, RuntimeException e) {
+        if (str == null || str.isBlank()) {
+            throw e;
+        }
+    }
+}
 ```
 
+- 아이디 자리수(6자리) 또는 비밀번호 자리수(8자리) 맞지 않는 경우 예외 발생 체크
+- 비밀번호, 비밀번호 확인 불일치 예외 발생 체크
+- 아이디 중복시 예외 발생 체크 
 
 ### 로그인 
 
