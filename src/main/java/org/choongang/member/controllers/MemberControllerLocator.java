@@ -3,7 +3,7 @@ package org.choongang.member.controllers;
 import org.choongang.global.AbstractControllerLocator;
 import org.choongang.global.Controller;
 import org.choongang.global.ControllerLocator;
-import org.choongang.global.constants.Menu;
+import org.choongang.global.constants.MainMenu;
 
 public class MemberControllerLocator extends AbstractControllerLocator {
 
@@ -19,18 +19,18 @@ public class MemberControllerLocator extends AbstractControllerLocator {
 
 
     @Override
-    public Controller find(Menu menu) {
-        Controller controller = controllers.get(menu);
+    public Controller find(MainMenu mainMenu) {
+        Controller controller = controllers.get(mainMenu);
         if (controller != null) {
             return controller;
         }
 
-        switch(menu) {
+        switch(mainMenu) {
             case JOIN: controller = new JoinController(); break;
             default: controller = new LoginController();
         }
 
-        controllers.put(menu, controller);
+        controllers.put(mainMenu, controller);
 
         return controller;
     }

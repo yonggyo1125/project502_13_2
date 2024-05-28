@@ -548,11 +548,11 @@ public class MemberServiceLocator extends AbstractServiceLocator {
     }
 
     @Override
-    public Service find(Menu menu) {
+    public Service find(Menu mainMenu) {
         
         ...
 
-        switch (menu) {
+        switch (mainMenu) {
             case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
             case LOGIN: service = new LoginService(); break;
         }
