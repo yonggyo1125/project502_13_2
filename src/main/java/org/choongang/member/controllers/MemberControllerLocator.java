@@ -5,14 +5,9 @@ import org.choongang.global.Controller;
 import org.choongang.global.ControllerLocator;
 import org.choongang.global.constants.Menu;
 
-import java.util.HashMap;
-
 public class MemberControllerLocator extends AbstractControllerLocator {
 
-
-    private MemberControllerLocator() {
-        controllers = new HashMap<>();
-    }
+    private MemberControllerLocator() {}
 
     public static ControllerLocator getInstance() {
         if (instance == null) {
