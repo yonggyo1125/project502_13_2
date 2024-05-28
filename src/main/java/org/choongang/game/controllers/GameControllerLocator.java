@@ -9,6 +9,8 @@ import org.choongang.global.Menu;
 
 public class GameControllerLocator extends AbstractControllerLocator {
 
+    private static ControllerLocator instance;
+
     private GameControllerLocator() {}
 
     public static ControllerLocator getInstance() {
@@ -21,7 +23,6 @@ public class GameControllerLocator extends AbstractControllerLocator {
 
     @Override
     public Controller find(Menu menu) {
-
         Controller controller = controllers.get(menu);
         if (controller != null) {
             return controller;

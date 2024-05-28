@@ -78,6 +78,7 @@ public abstract class AbstractController implements Controller {
         switch(menuNo) {
             case 1: mainMenu = MainMenu.JOIN; break; // 회원가입
             case 2: mainMenu = MainMenu.LOGIN; break; // 로그인
+            case 3: mainMenu = MainMenu.GAME; break; // 게임하기
             default: mainMenu = MainMenu.MAIN; // 메인 메뉴
         }
 

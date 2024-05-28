@@ -10,6 +10,7 @@ public class MainTpl implements Template {
         sb.append("메뉴를 선택하세요.\n")
                 .append("1. 회원가입\n")
                 .append("2. 로그인\n")
+                .append("3. 게임하기\n")
                 .append("--------------------------------\n");
 
         return sb.toString();

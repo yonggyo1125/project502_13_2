@@ -8,6 +8,8 @@ import org.choongang.global.constants.MainMenu;
 
 public class MemberControllerLocator extends AbstractControllerLocator {
 
+    private static ControllerLocator instance;
+
     private MemberControllerLocator() {}
 
     public static ControllerLocator getInstance() {

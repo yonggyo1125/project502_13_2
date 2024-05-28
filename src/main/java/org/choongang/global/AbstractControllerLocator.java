@@ -5,8 +5,6 @@ import java.util.Map;
 
 public abstract class AbstractControllerLocator implements ControllerLocator {
 
-    protected static ControllerLocator instance;
-
     protected Map<Menu,Controller> controllers;
 
     protected  AbstractControllerLocator() {
