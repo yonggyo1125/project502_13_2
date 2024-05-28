@@ -629,7 +629,169 @@ public interface RequiredValidator {
 
 ### 로그인 
 
+#### 로그인 구현 절차
 
+- 아이디, 비밀번호 필수 입력 유효성 체크 
+- 아이디로 조회된 회원이 있는지 체크
+- 조회된 회원 데이터의 비밀번호와 사용자가 입력한 비밀번호 일치 여부 체크(BCrypt 해시 검증)
+- 일치하면 애플리케이션 전역에 회원정보 유지
+
+
+> 로그인 유효성 검사
+> org/choongang/member/validators/LoginValidator.java
+
+```java
+package org.choongang.member.validators;
+
+import org.choongang.global.exceptions.ValidationException;
+import org.choongang.global.validators.RequiredValidator;
+import org.choongang.global.validators.Validator;
+import org.choongang.member.controllers.RequestLogin;
+import org.choongang.member.entities.Member;
+import org.choongang.member.mapper.MemberMapper;
+import org.mindrot.jbcrypt.BCrypt;
+
+public class LoginValidator implements Validator<RequestLogin>, RequiredValidator {
+
+    private final MemberMapper mapper;
+
+    public LoginValidator(MemberMapper mapper) {
+        this.mapper = mapper;
+    }
+    /**
+     * 1. 아이디, 비밀번호 필수 입력 유효성 체크
+     * 2. 아이디로 조회된 회원이 있는지 체크
+     * 3. 조회된 회원 데이터의 비밀번호와 사용자가 입력한 비밀번호 일치 여부 체크(BCrypt 해시 검증)
+     * @param form
+     */
+    @Override
+    public void check(RequestLogin form) {
+        String userId = form.getUserId();
+        String userPw = form.getUserPw();
+
+        // 아이디, 비밀번호 필수 입력 유효성 체크
+        checkRequired(userId, new ValidationException("아이디를 입력하세요."));
+        checkRequired(userPw, new ValidationException("비밀번호를 입력하세요."));
+
+        // 아이디로 조회된 회원이 있는지, 있다면 비밀번호가 일치하는지 체크
+        String message = "아이디 또는 비밀번호가 일치하지 않습니다.";
+        Member member = mapper.get(userId);
+        if (member == null || !BCrypt.checkpw(userPw, member.getUserPw())) {
+            throw new ValidationException(message);
+        }
+    }
+}
+```
+> 로그인 상태 유지
+> org/choongang/member/MemberSession.java
+
+
+```java
+package org.choongang.member;
+
+import org.choongang.member.entities.Member;
+
+public class MemberSession {
+    private static Member member;
+
+    /**
+     * 로그인은 회원 정보를 애플리케이션 전역에 유지하면 되므로
+     * DB에서 조회된 member를 정적 변수 member에 할당
+     * @param member
+     */
+    public static void login(Member member) {
+        MemberSession.member = member;
+    }
+
+    /**
+     * 로그인 여부 체크
+     * 정적 변수인 member에 회원 정보가 유지되고 있으면 로그인 상태이다.
+     * @return
+     */
+    public static boolean isLogin() {
+        return member != null;
+    }
+
+    /**
+     * 로그아웃은 정적 변수인 member의 값을 비워 주면 된다.
+     * 
+     */
+    public static void logout() {
+        member = null;
+    }
+}
+```
+
+> 로그인 처리
+> org/choongang/member/services/LoginService.java
+
+```java
+package org.choongang.member.services;
+
+import org.choongang.global.Service;
+import org.choongang.member.MemberSession;
+import org.choongang.member.controllers.RequestLogin;
+import org.choongang.member.entities.Member;
+import org.choongang.member.mapper.MemberMapper;
+import org.choongang.member.validators.LoginValidator;
+
+public class LoginService implements Service<RequestLogin> {
+
+    private final LoginValidator validator;
+    private final MemberMapper mapper;
+
+
+    public LoginService(MemberMapper mapper, LoginValidator validator) {
+        this.validator = validator;
+        this.mapper = mapper;
+    }
+
+    @Override
+    public void process(RequestLogin form) {
+        // 로그인 유효성 검사 - 예외 발생하지 않으면 이상 없음
+        validator.check(form);
+
+        // 회원정보 조회
+        Member member = mapper.get(form.getUserId());
+
+        // 로그인 처리
+        MemberSession.login(member);
+    }
+}
+```
+
+> MemberServiceLocator에 LoginValidator와 LoginService 객체 생성시 의존 객체 주입
+> org/choongang/member/services/MemberServiceLocator.java
+
+```java
+
+...
+
+public class MemberServiceLocator extends AbstractServiceLocator {
+
+    ...
+
+    // 로그인 유효성 검사 Validator
+    public LoginValidator loginValidator() {
+        return new LoginValidator(memberMapper());
+    }
+
+    ...
+    
+    @Override
+    public Service find(Menu menu) {
+        
+        ...
+
+        switch (menu) {
+            case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
+            case LOGIN: service = new LoginService(memberMapper(), loginValidator()); break;
+        }
+
+        ...
+    }
+}
+```
 
 ## [묵찌빠 게임]()
 - 랭킹 기능 
