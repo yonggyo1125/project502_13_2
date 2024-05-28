@@ -300,6 +300,168 @@ public class SearchMember {
 > org/choongang/member/mapper/MemberMapper.java
 
 ```java
+package org.choongang.member.mapper;
+
+import org.choongang.member.controllers.SearchMember;
+import org.choongang.member.entities.Member;
+
+import java.util.List;
+
+public interface MemberMapper {
+    List<Member> getList(SearchMember search);
+    Member get(String userId);
+    Member get(long userNo);
+    long getTotal(SearchMember search);
+    int exist(String userId);
+    int register(Member member);
+    int modify(Member member);
+    int delete(String userId);
+}
+```
+
+> 회원 가입 서비스 
+> 회원 가입시 처리할 부분 
+> 1. 전달 받은 데이터 유효성 검사 : 유효성 검사 실패시 ValidationException 발생시킴
+>   - 필수 데이터 체크(아이디, 비밀번호, 비밀번호 확인, 회원명)
+>   - 아이디 자리수 체크(6자리 이상)
+>   - 비밀번호 자리수 체크(8자리 이상)
+>   - 아이디 중복 여부 체크
+>   - 비밀번호와 비밀번호 확인 일치 여부
+> 
+> 2. 비밀번호 해시화
+>    - 비밀번호를 그대로 데이터베이스에 저장하는 것은 보안상 바람직하지 않음 
+>    - 비밀번호는 해시화하여 저장 
+>    - 암호화는 2가지 
+>      - 복호화(원 데이터로 복구 가능) 가능 암호화(양방향)
+>      - 해시화(원 데이터로 복구 불가 - 단방향)
+>       - 해시화 역시 같은 값에 대한 같은 값으로 해시가 만들어지는 고정해시(SHA1,SHA256, SHA512, MD5 등등)
+>       - 해시를 만들때마다 바뀌는 유동해시가 있음(예 - BCrypt), 보안은 예측 불가해야 강해짐, 따라서 비밀번호와 같은 민감한 데이터는 맞는지 여부만 체크할 수 있는 유동해시를 사용해야 함
+> 
+> 3. 데이터베이스에 영구 저장 처리
+
+
+> 비밀번호 해시화를 위한 JBCrypt 의존성 추가
+> build.gradle
+
+```groovy
+...
+dependencies {
+    ...
+    
+    implementation 'org.mindrot:jbcrypt:0.4'
+    
+    ...
+}
+...
+```
+
+> 공통 예외 정의
+> org/choongang/global/exceptions/CommonException.java
+
+```java
+package org.choongang.global.exceptions;
+
+import lombok.Getter;
+
+@Getter
+public class CommonException extends RuntimeException {
+    private int code; // 에러 코드
+
+    public CommonException(String message, int code) {
+        super(message);
+        this.code = code;
+    }
+}
+```
+
+> 공통 예외 정의 - 유효성 검사 실패시
+> org/choongang/global/exceptions/ValidationExcetpion.java
+
+```java
+package org.choongang.global.exceptions;
+
+public class ValidationException extends CommonException{
+
+    // 유효성 검사 실패 오류 코드는 400으로 정함
+    public ValidationException(String message) {
+        super(message, 400);
+    }
+}
+
+``` 
+
+> 공통 Validator 인터페이스 정의
+> org/choongang/global/validators/Validator.java
+
+```java
+package org.choongang.global.validators;
+
+public interface Validator<T> {
+    void check(T form);
+}
+```
+
+> 회원가입 Validator 정의
+> org/choongang/member/validators/JoinValidator.java
+
+```java
+package org.choongang.member.validators;
+
+import org.choongang.global.validators.Validator;
+import org.choongang.member.controllers.RequestJoin;
+
+public class JoinValidator implements Validator<RequestJoin> {
+
+    @Override
+    public void check(RequestJoin form) {
+        
+    }
+}
+```
+
+> org/choongang/member/services/JoinService.java
+> 회원가입 기능을 구현하기 위한 의존성 (MemberMapper, JoinValidator)
+
+```java
+
+```
+
+
+> org/choongang/member/services/MemberServiceLocator.java
+> joinValidator(), memberMapper() : 의존 객체 생성 메서드 추가
+> new JoinService(memberMapper(), joinValidator()); 와 같이 의존 객체 생성자에 주입
+
+```java
+
+...
+
+public class MemberServiceLocator extends AbstractServiceLocator {
+
+    ...
+    
+    // 회원가입 유효성 검사 Validator
+    public JoinValidator joinValidator() {
+        return new JoinValidator();
+    }
+
+    // MemberMapper 인터페이스 구현체
+    public MemberMapper memberMapper() {
+        return DBConn.getSession().getMapper(MemberMapper.class);
+    }
+
+    @Override
+    public Service find(Menu menu) {
+        
+        ...
+
+        switch (menu) {
+            case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
+            case LOGIN: service = new LoginService(); break;
+        }
+
+        ...
+    }
+}
 
 ```
 
@@ -310,5 +472,7 @@ public class SearchMember {
 
 
 ## [묵찌빠 게임]()
+- 랭킹 기능 
+
 ## [학생관리프로그램]()
 

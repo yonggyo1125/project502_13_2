@@ -11,5 +11,7 @@ public interface MemberMapper {
     Member get(long userNo);
     long getTotal(SearchMember search);
     int exist(String userId);
-
+    int register(Member member);
+    int modify(Member member);
+    int delete(String userId);
 }
