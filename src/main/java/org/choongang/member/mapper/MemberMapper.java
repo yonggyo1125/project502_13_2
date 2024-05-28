@@ -8,7 +8,6 @@ import java.util.List;
 public interface MemberMapper {
     List<Member> getList(SearchMember search);
     Member get(String userId);
-    Member get(long userNo);
     long getTotal(SearchMember search);
     int exist(String userId);
     int register(Member member);

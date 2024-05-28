@@ -30,4 +30,8 @@ public class MemberSession {
     public static void logout() {
         member = null;
     }
+
+    public static Member getMember() {
+        return member;
+    }
 }

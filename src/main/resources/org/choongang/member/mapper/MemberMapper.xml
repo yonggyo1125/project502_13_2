@@ -40,9 +40,6 @@
             <if test="userId != null">
                 USER_ID=#{userId}
             </if>
-            <if test="userNo != null">
-                USER_NO=#{userNo}
-            </if>
         </where>
     </select>
 

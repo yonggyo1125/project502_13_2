@@ -252,9 +252,6 @@ public class DBConn {
             <if test="userId != null">
                 USER_ID=#{userId}
             </if>
-            <if test="userNo != null">
-                USER_NO=#{userNo}
-            </if>
         </where>
     </select>
 
@@ -348,7 +345,6 @@ import java.util.List;
 public interface MemberMapper {
     List<Member> getList(SearchMember search);
     Member get(String userId);
-    Member get(long userNo);
     long getTotal(SearchMember search);
     int exist(String userId);
     int register(Member member);
@@ -714,10 +710,14 @@ public class MemberSession {
 
     /**
      * 로그아웃은 정적 변수인 member의 값을 비워 주면 된다.
-     * 
+     *
      */
     public static void logout() {
         member = null;
+    }
+
+    public static Member getMember() {
+        return member;
     }
 }
 ```
@@ -792,6 +792,69 @@ public class MemberServiceLocator extends AbstractServiceLocator {
     }
 }
 ```
+> 로그인 기능 테스트
+> src/test/java/.../member/services/LoginServiceTest
+```java
+package org.choongang.member.services;
+
+import org.choongang.global.Service;
+import org.choongang.global.constants.Menu;
+import org.choongang.member.MemberSession;
+import org.choongang.member.controllers.RequestJoin;
+import org.choongang.member.controllers.RequestLogin;
+import org.choongang.member.entities.Member;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class LoginServiceTest {
+    private Service loginService;
+    private Service joinService;
+    private RequestLogin loginForm;
+    private RequestJoin joinForm;
+
+    @BeforeEach
+    void init() {
+        /**
+         * 로그인 테스트는 회원 가입을 한 후 가입한 회원 정보로
+         * 로그인이 되는지 테스트 한다. 즉, 가입먼저 시키고 테스트 진행
+         */
+        joinService = MemberServiceLocator.getInstance().find(Menu.JOIN);
+        loginService = MemberServiceLocator.getInstance().find(Menu.LOGIN);
+
+        joinForm = RequestJoin.builder()
+                .userId("u" + System.currentTimeMillis())
+                .userPw("12345678")
+                .confirmPw("12345678")
+                .userNm("사용자")
+                .build();
+
+        joinService.process(joinForm);
+
+        loginForm = RequestLogin.builder()
+                .userId(joinForm.getUserId())
+                .userPw(joinForm.getUserPw())
+                .build();
+    }
+
+    @Test
+    @DisplayName("로그인 성공시 예외 발생 하지 않고, 로그인 상태 true, 회원정보 유지됨")
+    void loginSuccessTest() {
+        // 성공한다면 예외가 없어야 한다.
+        assertDoesNotThrow(() -> loginService.process(loginForm));
+
+        // 로그인 상태가 true
+        assertTrue(MemberSession.isLogin());
+
+        // 회원 정보가 있는지 체크
+        Member member = MemberSession.getMember();
+        assertEquals(loginForm.getUserId(), member.getUserId());
+    }
+}
+```
+
 
 ## [묵찌빠 게임]()
 - 랭킹 기능 
