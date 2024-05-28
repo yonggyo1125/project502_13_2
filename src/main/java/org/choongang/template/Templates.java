@@ -1,5 +1,7 @@
 package org.choongang.template;
 
+import org.choongang.game.constants.SubMenu;
+import org.choongang.global.Menu;
 import org.choongang.global.constants.MainMenu;
 import org.choongang.template.game.GameTpl;
 import org.choongang.template.main.MainTpl;
@@ -12,7 +14,7 @@ import java.util.Map;
 
 public class Templates {
     private static Templates instance;
-    private Map<MainMenu, Template> tpls;
+    private Map<Menu, Template> tpls;
 
     private Templates() {
         tpls = new HashMap<>();
@@ -26,26 +28,40 @@ public class Templates {
         return instance;
     }
 
-    public void render(MainMenu mainMenu) {
+    public void render(Menu menu) {
 
-        System.out.println(find(mainMenu).getTpl());
+        System.out.println(find(menu).getTpl());
     }
 
-    public Template find(MainMenu mainMenu) {
-        Template tpl = tpls.get(mainMenu);
+    public Template find(Menu menu) {
+        Template tpl = tpls.get(menu);
         if (tpl != null) {
             return tpl;
         }
+        if (menu instanceof SubMenu) {
+            SubMenu subMenu = (SubMenu) menu;
 
-        switch (mainMenu) {
-            case JOIN: tpl = new JoinTpl(); break;
-            case LOGIN: tpl = new LoginTpl(); break;
-            case MYPAGE: tpl = new MypageTpl(); break;
-            case GAME: tpl = new GameTpl(); break;
-            default: tpl = new MainTpl();
+        } else {
+            MainMenu mainMenu = (MainMenu)menu;
+            switch (mainMenu) {
+                case JOIN:
+                    tpl = new JoinTpl();
+                    break;
+                case LOGIN:
+                    tpl = new LoginTpl();
+                    break;
+                case MYPAGE:
+                    tpl = new MypageTpl();
+                    break;
+                case GAME:
+                    tpl = new GameTpl();
+                    break;
+                default:
+                    tpl = new MainTpl();
+            }
         }
 
-        tpls.put(mainMenu, tpl);
+        tpls.put(menu, tpl);
 
         return tpl;
     }
