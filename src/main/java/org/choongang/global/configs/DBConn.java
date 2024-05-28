@@ -13,7 +13,7 @@ public class DBConn {
 
     static {
         try {
-            Reader reader = Resources.getResourceAsReader("org/choonang/global/configs/mybatis-config.xml");
+            Reader reader = Resources.getResourceAsReader("org/choongang/global/configs/mybatis-config.xml");
             factory = new SqlSessionFactoryBuilder().build(reader);
         } catch (IOException e) {
             e.printStackTrace();

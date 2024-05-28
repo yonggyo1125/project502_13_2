@@ -1,5 +1,8 @@
 package org.choongang.global;
 
 public interface Service<T> {
-    void process(T form);
+    default void process(T form) {};
+    default T process() {
+        return null;
+    }
 }
