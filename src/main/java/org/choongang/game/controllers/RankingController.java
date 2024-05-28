@@ -5,6 +5,11 @@ import org.choongang.global.AbstractController;
 public class RankingController extends AbstractController {
     @Override
     public void show() {
-        System.out.println("게임 랭킹..");
+
+    }
+
+    @Override
+    public void prompt() {
+
     }
 }
