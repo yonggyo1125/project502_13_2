@@ -1,6 +1,7 @@
 package org.choongang.template;
 
 import org.choongang.global.constants.MainMenu;
+import org.choongang.template.game.GameTpl;
 import org.choongang.template.main.MainTpl;
 import org.choongang.template.member.JoinTpl;
 import org.choongang.template.member.LoginTpl;
@@ -40,6 +41,7 @@ public class Templates {
             case JOIN: tpl = new JoinTpl(); break;
             case LOGIN: tpl = new LoginTpl(); break;
             case MYPAGE: tpl = new MypageTpl(); break;
+            case GAME: tpl = new GameTpl(); break;
             default: tpl = new MainTpl();
         }
 
