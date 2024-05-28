@@ -576,8 +576,15 @@ public class MemberServiceLocator extends AbstractServiceLocator {
 
 
 
-## [묵찌빠 게임]()
-- 랭킹 기능 
+## [묵찌빠 게임](https://github.com/yonggyo1125/project502_13_2/tree/game)
+
+### 게임 메인
+> 게임 서브 메뉴 
+> 1. 혼자하기
+> 2. 같이하기 
+> 3. 순위보기
+
+랭킹 기능 
 
 ## [학생관리프로그램]()
 
