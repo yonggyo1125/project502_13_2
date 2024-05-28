@@ -20,7 +20,7 @@ public class MemberServiceLocator extends AbstractServiceLocator {
 
     // 회원가입 유효성 검사 Validator
     public JoinValidator joinValidator() {
-        return new JoinValidator();
+        return new JoinValidator(memberMapper());
     }
 
     // MemberMapper 인터페이스 구현체

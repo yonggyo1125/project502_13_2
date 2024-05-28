@@ -401,20 +401,79 @@ public interface Validator<T> {
 }
 ```
 
+> 공통 필수항목 체크 인터페이스 정의
+> org/choongang/global/validators/RequiredValidator.java
+
+```java
+package org.choongang.global.validators;
+
+/**
+ * 필수 항목 체크
+ * 
+ */
+public interface RequiredValidator {
+    default void checkRequired(String str, RuntimeException e) {
+        if (str == null || str.isBlank()) {
+            throw e;
+        }
+    }
+}
+```
+
+
 > 회원가입 Validator 정의
 > org/choongang/member/validators/JoinValidator.java
 
 ```java
 package org.choongang.member.validators;
 
+import org.choongang.global.exceptions.ValidationException;
+import org.choongang.global.validators.RequiredValidator;
 import org.choongang.global.validators.Validator;
 import org.choongang.member.controllers.RequestJoin;
+import org.choongang.member.mapper.MemberMapper;
 
-public class JoinValidator implements Validator<RequestJoin> {
+public class JoinValidator implements Validator<RequestJoin>, RequiredValidator {
+
+    private final MemberMapper mapper;
+
+    public JoinValidator(MemberMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public void check(RequestJoin form) {
-        
+        // 필수 항목 체크 S
+        String userId = form.getUserId();
+        String userPw = form.getUserPw();
+        String confirmPw = form.getConfirmPw();
+        String userNm = form.getUserNm();
+
+        checkRequired(userId, new ValidationException("아이디를 입력하세요."));
+        checkRequired(userPw, new ValidationException("비밀번호를 입력하세요."));
+        checkRequired(confirmPw, new ValidationException("비밀번호 확인을 입력하세요."));
+        checkRequired(userNm, new ValidationException("회원명을 입력하세요."));
+        // 필수 항목 체크 E
+
+        // 아이디 자리수 체크(6자리 이상)
+        if (userId == null || userId.length() < 6) {
+            throw new ValidationException("아이디는 6자리 이상 입력하세요.");
+        }
+
+        // 아이디 중복 여부 체크
+        if (mapper.exist(userId) > 0) {
+            throw new ValidationException("이미 등록된 아이디 입니다.");
+        }
+
+        // 비밀번호 자리수 체크(8자리 이상)
+        if (userPw == null || userPw.length() < 8) {
+            throw new ValidationException("비밀번호는 8자리 이상 입력하세요.");
+        }
+
+        // 비밀번호, 비밀번호 확인 일치 여부 체크
+        if (userPw != null && confirmPw != null && !userPw.equals(confirmPw)) {
+            throw new ValidationException("비밀번호가 일치하지 않습니다.");
+        }
     }
 }
 ```
@@ -423,7 +482,46 @@ public class JoinValidator implements Validator<RequestJoin> {
 > 회원가입 기능을 구현하기 위한 의존성 (MemberMapper, JoinValidator)
 
 ```java
+package org.choongang.member.services;
 
+import lombok.RequiredArgsConstructor;
+import org.choongang.global.Service;
+import org.choongang.global.exceptions.ValidationException;
+import org.choongang.member.controllers.RequestJoin;
+import org.choongang.member.entities.Member;
+import org.choongang.member.mapper.MemberMapper;
+import org.choongang.member.validators.JoinValidator;
+import org.mindrot.jbcrypt.BCrypt;
+
+@RequiredArgsConstructor
+public class JoinService implements Service<RequestJoin> {
+
+    private final MemberMapper mapper;
+    private final JoinValidator validator;
+
+    @Override
+    public void process(RequestJoin form) {
+        // 회원 가입 유효성 검사
+        validator.check(form);
+
+        // 비밀번호 해시화
+        String userPw = BCrypt.hashpw(form.getUserPw(), BCrypt.gensalt(10));
+
+
+        // 데이터베이스에 영구 저장
+        Member member = Member.builder()
+                        .userId(form.getUserId())
+                        .userPw(userPw)
+                        .userNm(form.getUserNm())
+                        .build();
+        int affectedRows = mapper.register(member);
+
+        if (affectedRows < 1) { // 회원 가입 처리 실패시
+            throw new ValidationException("회원가입 실패하였습니다.");
+        }
+
+    }
+}
 ```
 
 
@@ -438,10 +536,10 @@ public class JoinValidator implements Validator<RequestJoin> {
 public class MemberServiceLocator extends AbstractServiceLocator {
 
     ...
-    
+
     // 회원가입 유효성 검사 Validator
     public JoinValidator joinValidator() {
-        return new JoinValidator();
+        return new JoinValidator(memberMapper());
     }
 
     // MemberMapper 인터페이스 구현체
@@ -465,6 +563,13 @@ public class MemberServiceLocator extends AbstractServiceLocator {
 
 ```
 
+#### 회원가입 서비스 기능 테스트 
+
+
+
+```java
+
+```
 
 
 ### 로그인 
