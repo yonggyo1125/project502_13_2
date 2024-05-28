@@ -26,7 +26,7 @@ public class MainRouter implements Router {
     public void change(MainMenu mainMenu) {
         ControllerLocator memlocator = MemberControllerLocator.getInstance();
         ControllerLocator gamelocator = GameControllerLocator.getInstance();
-        System.out.println(gamelocator);
+
         Controller controller = null;
         switch(mainMenu) {
             case JOIN: controller =  memlocator.find(MainMenu.JOIN); break;

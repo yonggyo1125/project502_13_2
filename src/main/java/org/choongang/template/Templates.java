@@ -12,6 +12,7 @@ import org.choongang.template.member.MypageTpl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class Templates {
     private static Templates instance;
@@ -30,11 +31,15 @@ public class Templates {
     }
 
     public void render(Menu menu) {
-
-        System.out.println(find(menu).getTpl());
+        render(menu, null);
     }
 
-    public Template find(Menu menu) {
+    public void render(Menu menu, Supplier<String> hook) {
+
+        System.out.println(find(menu, hook).getTpl());
+    }
+
+    public Template find(Menu menu, Supplier<String> hook) {
         Template tpl = tpls.get(menu);
         if (tpl != null) {
             return tpl;
@@ -64,6 +69,10 @@ public class Templates {
                 default:
                     tpl = new MainTpl();
             }
+        }
+
+        if (hook != null) {
+            tpl.addHook(hook);
         }
 
         tpls.put(menu, tpl);

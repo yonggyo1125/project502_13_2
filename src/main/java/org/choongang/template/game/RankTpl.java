@@ -23,10 +23,6 @@ public class RankTpl implements Template {
             sb.append(hook.get());
         }
 
-        sb.append(Templates.getInstance().line());
-        sb.append("1. 메인메뉴 이동\n");
-        sb.append("2. 게임메뉴 이동\n");
-
         return sb.toString();
     }
 }
