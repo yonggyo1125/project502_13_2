@@ -4,6 +4,7 @@ import org.choongang.game.constants.SubMenu;
 import org.choongang.global.Menu;
 import org.choongang.global.constants.MainMenu;
 import org.choongang.template.game.GameTpl;
+import org.choongang.template.game.RankTpl;
 import org.choongang.template.main.MainTpl;
 import org.choongang.template.member.JoinTpl;
 import org.choongang.template.member.LoginTpl;
@@ -40,7 +41,11 @@ public class Templates {
         }
         if (menu instanceof SubMenu) {
             SubMenu subMenu = (SubMenu) menu;
-
+            switch(subMenu) {
+                case ALONE:
+                case TOGETHER:
+                case RANKING: tpl = new RankTpl(); break;
+            }
         } else {
             MainMenu mainMenu = (MainMenu)menu;
             switch (mainMenu) {
