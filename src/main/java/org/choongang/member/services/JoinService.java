@@ -2,6 +2,7 @@ package org.choongang.member.services;
 
 import lombok.RequiredArgsConstructor;
 import org.choongang.global.Service;
+import org.choongang.global.configs.DBConn;
 import org.choongang.global.exceptions.ValidationException;
 import org.choongang.member.controllers.RequestJoin;
 import org.choongang.member.entities.Member;
@@ -9,11 +10,12 @@ import org.choongang.member.mapper.MemberMapper;
 import org.choongang.member.validators.JoinValidator;
 import org.mindrot.jbcrypt.BCrypt;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class JoinService implements Service<RequestJoin> {
 
-    private final MemberMapper mapper;
-    private final JoinValidator validator;
+    private final MemberMapper mapper = DBConn.getSession().getMapper(MemberMapper.class);
+    private final JoinValidator validator = new JoinValidator();
+
 
     @Override
     public void process(RequestJoin form) {
