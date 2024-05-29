@@ -8,28 +8,39 @@ import org.choongang.member.mapper.MemberMapper;
 import org.choongang.member.services.JoinService;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PointLogMapperTest {
 
     private MemberMapper memberMapper;
     private JoinService joinService;
     private PointLogMapper mapper;
-    private Member member;
+    private List<Member> members;
 
     @BeforeEach
     void init() {
         SqlSession session = DBConn.getSession();
         mapper = session.getMapper(PointLogMapper.class);
         memberMapper = session.getMapper(MemberMapper.class);
+        members = new ArrayList<>();
 
-        RequestJoin form = RequestJoin.builder()
-                .userId("u" + System.currentTimeMillis())
-                .userPw("12345678")
-                .confirmPw("12345678")
-                .userNm("사용자")
-                .build();
-        joinService.process(form);
+        for (int i = 0; i < 15; i++) {
+            RequestJoin form = RequestJoin.builder()
+                    .userId("u" + System.currentTimeMillis())
+                    .userPw("12345678")
+                    .confirmPw("12345678")
+                    .userNm("사용자")
+                    .build();
+            joinService.process(form);
 
-        member = memberMapper.get(form.getUserId());
+            Member member = memberMapper.get(form.getUserId());
+            members.add(member);
+        }
+
+    }
+
+    void mapperTest1() {
 
     }
 }
