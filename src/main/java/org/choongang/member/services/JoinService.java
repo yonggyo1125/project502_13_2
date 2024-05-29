@@ -2,7 +2,6 @@ package org.choongang.member.services;
 
 import lombok.RequiredArgsConstructor;
 import org.choongang.global.Service;
-import org.choongang.global.configs.DBConn;
 import org.choongang.global.exceptions.ValidationException;
 import org.choongang.member.controllers.RequestJoin;
 import org.choongang.member.entities.Member;
@@ -10,12 +9,11 @@ import org.choongang.member.mapper.MemberMapper;
 import org.choongang.member.validators.JoinValidator;
 import org.mindrot.jbcrypt.BCrypt;
 
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class JoinService implements Service<RequestJoin> {
 
-    private final MemberMapper mapper = DBConn.getSession().getMapper(MemberMapper.class);
-    private final JoinValidator validator = new JoinValidator();
-
+    private final MemberMapper mapper;
+    private final JoinValidator validator;
 
     @Override
     public void process(RequestJoin form) {
@@ -28,10 +26,10 @@ public class JoinService implements Service<RequestJoin> {
 
         // 데이터베이스에 영구 저장
         Member member = Member.builder()
-                        .userId(form.getUserId())
-                        .userPw(userPw)
-                        .userNm(form.getUserNm())
-                        .build();
+                .userId(form.getUserId())
+                .userPw(userPw)
+                .userNm(form.getUserNm())
+                .build();
         int affectedRows = mapper.register(member);
 
         if (affectedRows < 1) { // 회원 가입 처리 실패시

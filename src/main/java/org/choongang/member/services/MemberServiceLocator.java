@@ -7,6 +7,7 @@ import org.choongang.global.configs.DBConn;
 import org.choongang.global.constants.MainMenu;
 import org.choongang.member.mapper.MemberMapper;
 import org.choongang.member.validators.JoinValidator;
+import org.choongang.member.validators.LoginValidator;
 
 public class MemberServiceLocator extends AbstractServiceLocator {
 
@@ -23,6 +24,11 @@ public class MemberServiceLocator extends AbstractServiceLocator {
         return new JoinValidator(memberMapper());
     }
 
+    // 로그인 유효성 검사 Validator
+    public LoginValidator loginValidator() {
+        return new LoginValidator(memberMapper());
+    }
+
     // MemberMapper 인터페이스 구현체
     public MemberMapper memberMapper() {
         return DBConn.getSession().getMapper(MemberMapper.class);
@@ -37,7 +43,7 @@ public class MemberServiceLocator extends AbstractServiceLocator {
 
         switch (mainMenu) {
             case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
-            case LOGIN: service = new LoginService(); break;
+            case LOGIN: service = new LoginService(memberMapper(), loginValidator()); break;
         }
 
         return service;

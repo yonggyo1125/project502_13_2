@@ -18,19 +18,19 @@
         <bind name="pUserNm" value="'%' + _parameter.getUserNm() + '%'" />
         <bind name="pKeyword" value="'%' + _parameter.getKeyword() + '%'" />
         SELECT * FROM (SELECT ROWNUM NUM, t.* FROM MEMBER t) m
-            <where>
-                <![CDATA[m.NUM >= {sRow} AND m.NUM <= {eRow}]]>
-                <if test="userId != null">
-                    AND USER_ID LIKE #{pUserId}
-                </if>
-                <if test="userNm != null">
-                    AND USER_NM LIKE #{pUserNm}
-                </if>
-                <if test="keyword != null">
-                    AND CONCAT(USER_ID, USER_NM) LIKE #{pKeyword}
-                </if>
-            </where>
-            ORDER BY m.regDt DESC
+        <where>
+            <![CDATA[m.NUM >= {sRow} AND m.NUM <= {eRow}]]>
+            <if test="userId != null">
+                AND USER_ID LIKE #{pUserId}
+            </if>
+            <if test="userNm != null">
+                AND USER_NM LIKE #{pUserNm}
+            </if>
+            <if test="keyword != null">
+                AND CONCAT(USER_ID, USER_NM) LIKE #{pKeyword}
+            </if>
+        </where>
+        ORDER BY m.regDt DESC
     </select>
 
     <!-- 회원 개별 조회 -->
@@ -39,9 +39,6 @@
         <where>
             <if test="userId != null">
                 USER_ID=#{userId}
-            </if>
-            <if test="userNo != null">
-                USER_NO=#{userNo}
             </if>
         </where>
     </select>
@@ -77,21 +74,21 @@
         </selectKey>
 
         INSERT INTO MEMBER (USER_NO, USER_ID, USER_PW, USER_NM)
-            VALUES {#{userNo}, #{userId}, #{userPw}, #{userNm})
+        VALUES (#{userNo}, #{userId}, #{userPw}, #{userNm})
     </insert>
 
     <!-- 회원 정보 수정 -->
     <update id="modify">
         UPDATE MEMBER
-            <set>
-                <if test="userPw != null">
-                    USER_PW=#{userPw},
-                </if>
-                <if test="userNm != null">
-                    USER_NM=#{userNm},
-                </if>
-                MOD_DT = SYSDATE
-            </set>
+        <set>
+            <if test="userPw != null">
+                USER_PW=#{userPw},
+            </if>
+            <if test="userNm != null">
+                USER_NM=#{userNm},
+            </if>
+            MOD_DT = SYSDATE
+        </set>
         WHERE USER_ID=#{userId}
     </update>
 
