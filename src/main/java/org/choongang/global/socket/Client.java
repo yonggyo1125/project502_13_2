@@ -1,9 +1,11 @@
 package org.choongang.global.socket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
@@ -29,10 +31,7 @@ public class Client {
             e.printStackTrace();
         }
 
-        /**
-         * 수신 데이터 처리
-         *
-         */
+        // 수신 데이터 처리 S
         Thread inputTh = new Thread(() -> {
             try (DataInputStream dis = new DataInputStream(socket.getInputStream())) {
 
@@ -42,14 +41,40 @@ public class Client {
                         break;
                     }
 
-
+                    String json = dis.readUTF();
+                    SocketData data = om.readValue(json, SocketData.class);
+                    handler.accept(data);
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+        inputTh.start();
+        // 수신 데이터 처리 E
 
+    }
+
+    public void send(SocketData data) {
+        try {
+            String json = om.writeValueAsString(data);
+
+            Thread th = new Thread(() -> {
+                try {
+                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+
+                    dos.writeUTF(json);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            th.start();
+
+        } catch (JsonProcessingException e) {
+           e.printStackTrace();
+        }
     }
 
 
