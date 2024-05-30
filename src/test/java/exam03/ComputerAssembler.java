@@ -2,7 +2,7 @@ package exam03;
 
 public class ComputerAssembler {
     public Monitor monitor() {
-        return new Monitor();
+        return new UpgradedMonitor();
     }
 
     public Body body() {

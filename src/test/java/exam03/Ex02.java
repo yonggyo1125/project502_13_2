@@ -6,5 +6,7 @@ public class Ex02 {
 
         Desktop d1 = assembler.desktop();
         Desktop d2 = assembler.desktop();
+        Desktop d3 = assembler.desktop();
+        Desktop d4 = assembler.desktop();
     }
 }
