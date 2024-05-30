@@ -35,7 +35,7 @@ public class GameServiceLocator extends AbstractServiceLocator {
             SubMenu subMenu = (SubMenu)menu;
             switch (subMenu) {
                 case ALONE:
-                case TOGETHER:
+                case TOGETHER: service = new GamePlayService(); break;
                 case RANKING: service = new RankingInfoService(pointLogMapper()); break;
             }
 

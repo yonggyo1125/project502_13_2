@@ -17,4 +17,13 @@ public class SocketData {
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime regDt;
+
+    public SocketData(String to, String message) {
+        this.to = to;
+        this.message = message;
+    }
+
+    public SocketData(String to) {
+        this.to = to;
+    }
 }

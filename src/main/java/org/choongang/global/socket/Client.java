@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -56,6 +57,9 @@ public class Client {
     }
 
     public void send(SocketData data) {
+        data.setFrom(name); // 사용자 고정
+        data.setRegDt(LocalDateTime.now()); // 전송 시간 고정
+
         try {
             String json = om.writeValueAsString(data);
 

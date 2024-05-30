@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 
 public class Ex01 {
     public static void main(String[] args) {
-        Client c1 = new Client("user01", s -> {
+        Client c1 = new Client("user02", s -> {
             System.out.println(s);
         });
 
         while(true) {
-            SocketData data = new SocketData("user01", "all", "테스트", LocalDateTime.now());
+            SocketData data = new SocketData("user02", "user03", "테스트", LocalDateTime.now());
 
             c1.send(data);
             try {

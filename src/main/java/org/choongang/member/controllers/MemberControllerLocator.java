@@ -35,6 +35,8 @@ public class MemberControllerLocator extends AbstractControllerLocator {
             default: controller = new LoginController();
         }
 
+        controller.setMenu(menu);
+
         controllers.put(menu, controller);
 
         return controller;

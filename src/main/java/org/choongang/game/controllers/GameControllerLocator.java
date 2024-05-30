@@ -40,6 +40,9 @@ public class GameControllerLocator extends AbstractControllerLocator {
             controller = new GameController();
         }
 
+        controller.setMenu(menu);
+
+        controllers.put(menu, controller);
 
         return controller;
     }

@@ -12,8 +12,14 @@ public abstract class AbstractController implements Controller {
 
     protected Scanner sc;
 
+    protected Menu menu;
+
     public AbstractController() {
         sc = new Scanner(System.in);
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
     }
 
     /**
