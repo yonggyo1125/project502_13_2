@@ -1108,3 +1108,7 @@ public class MemberControllerLocator extends AbstractControllerLocator {
     - 학생 관리 : 등록, 수정, 삭제, 조회 가능 
     - 수업 관리 : 등록, 수정, 삭제 모두 가능
     - 출결 관리 : 출결 조회 가능
+
+### 회원 관련 기능 추가
+
+> 회원 역할을 학생, 강사, 행정으로 구분하기 위해 다음과 같이 enum 상수를 
