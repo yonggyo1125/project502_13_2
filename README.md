@@ -1111,4 +1111,37 @@ public class MemberControllerLocator extends AbstractControllerLocator {
 
 ### 회원 관련 기능 추가
 
-> 회원 역할을 학생, 강사, 행정으로 구분하기 위해 다음과 같이 enum 상수를 
+> 회원 역할을 학생, 강사, 행정으로 구분하기 위해 다음과 같이 enum 상수를 정의
+> org/choongang/member/constants/MemberType.java
+
+```java
+package org.choongang.member.constants;
+
+import java.util.Arrays;
+import java.util.List;
+
+public enum MemberType {
+    STUDENT("학생"),
+    TEACHER("강사"),
+    ADMIN("행정");
+
+    private final String title;
+
+    MemberType(String title) {
+        this.title = title;
+    }
+
+    public String title() {
+        return title;
+    }
+    
+    public static List<String[]> getList() {
+        return Arrays.asList(
+                new String[] {STUDENT.name(), STUDENT.title()},
+                new String[] {TEACHER.name(), TEACHER.title()},
+                new String[] {ADMIN.name(), ADMIN.title()},
+        );
+    }
+}
+```
+
