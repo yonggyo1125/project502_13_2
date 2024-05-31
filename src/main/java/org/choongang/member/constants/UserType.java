@@ -3,14 +3,14 @@ package org.choongang.member.constants;
 import java.util.Arrays;
 import java.util.List;
 
-public enum MemberType {
+public enum UserType {
     STUDENT("학생"),
     TEACHER("강사"),
     ADMIN("행정");
 
     private final String title;
 
-    MemberType(String title) {
+    UserType(String title) {
         this.title = title;
     }
 

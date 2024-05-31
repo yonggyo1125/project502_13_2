@@ -1120,7 +1120,7 @@ package org.choongang.member.constants;
 import java.util.Arrays;
 import java.util.List;
 
-public enum MemberType {
+public enum UserType {
     STUDENT("학생"),
     TEACHER("강사"),
     ADMIN("행정");
@@ -1144,4 +1144,21 @@ public enum MemberType {
     }
 }
 ```
+
+> 회원 테이블 및 시퀀스 추가
+
+```sql
+CREATE TABLE MEMBER (
+	USER_NO NUMBER(10) PRIMARY KEY,
+	USER_ID VARCHAR2(30) NOT NULL UNIQUE,
+	USER_PW VARCHAR2(65) NOT NULL,
+	USER_NM VARCHAR2(40) NOT NULL,
+	USER_TYPE VARCHAR2(30) DEFAULT 'STUDENT',
+	REG_DT DATE DEFAULT SYSDATE,
+	MOD_DT DATE
+);
+
+CREATE SEQUENCE SEQ_MEMBER;
+```
+
 
