@@ -1,6 +1,7 @@
 package org.choongang.member.services;
 
 import org.choongang.global.AbstractServiceLocator;
+import org.choongang.global.Menu;
 import org.choongang.global.Service;
 import org.choongang.global.ServiceLocator;
 import org.choongang.global.configs.DBConn;
@@ -35,12 +36,13 @@ public class MemberServiceLocator extends AbstractServiceLocator {
     }
 
     @Override
-    public Service find(MainMenu mainMenu) {
-        Service service = services.get(mainMenu);
+    public Service find(Menu menu) {
+        Service service = services.get(menu);
         if (service != null) {
             return service;
         }
 
+        MainMenu mainMenu = (MainMenu)menu;
         switch (mainMenu) {
             case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
             case LOGIN: service = new LoginService(memberMapper(), loginValidator()); break;

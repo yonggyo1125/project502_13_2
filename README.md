@@ -952,4 +952,135 @@ public interface Router {
 
 }
 ```
+> MainRouter 클래스 change 메서드 매개변수 MainMenu를 Menu로 변경
+> org/choongang/main/MainRouter.java
+
+```java
+...
+public class MainRouter implements Router {
+    
+    ...
+    
+    @Override
+    public void change(Menu menu) {
+        ControllerLocator memlocator = MemberControllerLocator.getInstance();
+
+        MainMenu mainMenu = (MainMenu) menu;
+        Controller controller = null;   
+     
+        ...
+    
+    }
+}
+```
+
+> ServiceLocator 인터페이스 및 하위 클래스 - MainMenu -> Menu로 변경
+> org/choongang/global/ServiceLocator.java
+
+```java
+...
+
+public interface ServiceLocator {
+    Service find(Menu menu);
+}
+```
+
+> org/choongang/member/services/MemberServiceLocator.java
+
+```java
+...
+
+public class MemberServiceLocator extends AbstractServiceLocator {
+    
+    ...
+
+    @Override
+    public Service find(Menu menu) {
+        Service service = services.get(menu);
+        if (service != null) {
+            return service;
+        }
+
+        MainMenu mainMenu = (MainMenu)menu;
+        switch (mainMenu) {
+            case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
+            case LOGIN: service = new LoginService(memberMapper(), loginValidator()); break;
+        }
+
+        return service;
+    }
+}
+```
+
+> ControllerLocator 인터페이스 및 하위 클래스 - MainMenu -> Menu로 변경
+> org/choongang/global/ControllerLocator.java
+
+```java
+
+...
+
+public interface ControllerLocator {
+    Controller find(Menu menu);
+}
+```
+
+> ControllerLocator 공통 내용 추가
+> org/choongang/global/AbstractControllerLocator.java
+
+```java
+package org.choongang.global;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class AbstractControllerLocator implements ControllerLocator {
+    protected Map<Menu, Controller> controllers;
+
+    protected AbstractControllerLocator() {
+        controllers = new HashMap<>();
+    }
+}
+```
+
+> org/choongang/member/controllers/MemberControllerLocator.java
+> ControllerLocator인터페이스 구현을 AbstractControllerLocator 추상 클래스 상속으로 변경 
+
+```java
+...
+
+public class MemberControllerLocator extends AbstractControllerLocator {
+
+    private static ControllerLocator instance;
+
+    private MemberControllerLocator() {}
+
+    public static ControllerLocator getInstance() {
+        if (instance == null) {
+            instance = new MemberControllerLocator();
+        }
+
+        return instance;
+    }
+
+
+    @Override
+    public Controller find(Menu menu) {
+        Controller controller = controllers.get(menu);
+        if (controller != null) {
+            return controller;
+        }
+
+        MainMenu mainMenu = (MainMenu)menu;
+
+        switch(mainMenu) {
+            case JOIN: controller = new JoinController(); break;
+            default: controller = new LoginController();
+        }
+
+        controllers.put(menu, controller);
+
+        return controller;
+    }
+}
+```
 
