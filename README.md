@@ -909,6 +909,8 @@ sqlplus system/oracle
 
 - PROJECT2_2 사용자 및 스키마 생성 
 - CONNECT, RESOURCE 롤 권한 부여
+- 설치한 도커 컨테이너의 테이블 스페이스(USERS)가 최소로 되어 있어 INSERT SQL문 실행시 오류가 발생합니다. 용량을 QUOTA UNLIMITED ON USERS를 추가하여 용량 제한을 풀어줍니다.
+
 ```
 CREATE USER PROJECT2_2 IDENTIFIED BY oracle QUOTA UNLIMITED ON USERS;
 GRANT CONNECT, RESOURCE TO PROJECT2_2;
@@ -1109,8 +1111,9 @@ public class MemberControllerLocator extends AbstractControllerLocator {
     - 수업 관리 : 등록, 수정, 삭제 모두 가능
     - 출결 관리 : 출결 조회 가능
 
-### 회원 관련 기능 추가
+### 회원 관련 추가 작업
 
+#### 회원 역할 정의
 > 회원 역할을 학생, 강사, 행정으로 구분하기 위해 다음과 같이 enum 상수를 정의
 > org/choongang/member/constants/MemberType.java
 
@@ -1139,13 +1142,13 @@ public enum UserType {
         return Arrays.asList(
                 new String[] {STUDENT.name(), STUDENT.title()},
                 new String[] {TEACHER.name(), TEACHER.title()},
-                new String[] {ADMIN.name(), ADMIN.title()},
+                new String[] {ADMIN.name(), ADMIN.title()}
         );
     }
 }
 ```
 
-> 회원 테이블 및 시퀀스 추가
+#### 회원 테이블 및 시퀀스 추가
 
 ```sql
 CREATE TABLE MEMBER (
@@ -1161,4 +1164,215 @@ CREATE TABLE MEMBER (
 CREATE SEQUENCE SEQ_MEMBER;
 ```
 
+#### DTO 및 mapper 변경
 
+> org/choongang/member/entities/Member.java
+> UserType userType 추가
+
+```java
+...
+
+public class Member {
+    private long userNo;
+    private String userId;
+    private String userPw;
+    private String userNm;
+    private UserType userType;
+    private LocalDateTime regDt;
+    private LocalDateTime modDt;
+}
+```
+
+> org/choongang/member/controllers/RequestJoin.java
+
+```java
+...
+public class RequestJoin {
+  ...
+
+  private String userType;
+}
+```
+
+> src/resources/ ... /member/mapper/MemberMapper.xml
+> MemberMapper.xml에 USER_TYPE 항목 추가 
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.choongang.member.mapper.MemberMapper">
+    <resultMap id="memberMap" type="org.choongang.member.entities.Member">
+        <result column="USER_NO" property="userNo" />
+        <result column="USER_ID" property="userId" />
+        <result column="USER_PW" property="userPw" />
+        <result column="USER_NM" property="userNm" />
+        <result column="USER_TYPE" property="userType" />
+        <result column="REG_DT" property="regDt" />
+        <result column="MOD_DT" property="modDt" />
+    </resultMap>
+
+    <!-- 회원 목록 조회 -->
+    <select id="getList" resultMap="memberMap">
+        <bind name="pUserId" value="'%' + _parameter.getUserId() + '%'" />
+        <bind name="pUserNm" value="'%' + _parameter.getUserNm() + '%'" />
+        <bind name="pKeyword" value="'%' + _parameter.getKeyword() + '%'" />
+        SELECT * FROM (SELECT ROWNUM NUM, t.* FROM MEMBER t) m
+            <where>
+                <![CDATA[m.NUM >= {sRow} AND m.NUM <= {eRow}]]>
+                <if test="userId != null">
+                    AND USER_ID LIKE #{pUserId}
+                </if>
+                <if test="userNm != null">
+                    AND USER_NM LIKE #{pUserNm}
+                </if>
+                <if test="keyword != null">
+                    AND CONCAT(USER_ID, USER_NM) LIKE #{pKeyword}
+                </if>
+            </where>
+            ORDER BY m.regDt DESC
+    </select>
+
+    <!-- 회원 개별 조회 -->
+    <select id="get" resultMap="memberMap">
+        SELECT * FROM MEMBER
+        <where>
+            <if test="userId != null">
+                USER_ID=#{userId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 회원 목록 갯수, 페이징 구현시 활용 가능 -->
+    <select id="getTotal" resultType="long">
+        <bind name="pUserId" value="'%' + _parameter.getUserId() + '%'" />
+        <bind name="pUserNm" value="'%' + _parameter.getUserNm() + '%'" />
+        <bind name="pKeyword" value="'%' + _parameter.getKeyword() + '%'" />
+        SELECT COUNT(*) FROM MEMBER
+        <where>
+            <if test="userId != null">
+                AND USER_ID LIKE #{pUserId}
+            </if>
+            <if test="userNm != null">
+                AND USER_NM LIKE #{pUserNm}
+            </if>
+            <if test="keyword != null">
+                AND CONCAT(USER_ID, USER_NM) LIKE #{pKeyword}
+            </if>
+        </where>
+    </select>
+
+    <!-- 회원 등록 여부 파악 - 갯수가 나오면 이미 등록으로 판단 -->
+    <select id="exist" resultType="int">
+        SELECT COUNT(*) FROM MEMBER WHERE USER_ID=#{userId}
+    </select>
+
+    <!-- 회원 등록 -->
+    <insert id="register">
+        <selectKey keyProperty="userNo" order="BEFORE" resultType="long">
+            SELECT SEQ_MEMBER.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO MEMBER (USER_NO, USER_ID, USER_PW, USER_NM, USER_TYPE)
+            VALUES (#{userNo}, #{userId}, #{userPw}, #{userNm}, #{userType})
+    </insert>
+
+    <!-- 회원 정보 수정 -->
+    <update id="modify">
+        UPDATE MEMBER
+            <set>
+                <if test="userPw != null">
+                    USER_PW=#{userPw},
+                </if>
+                <if test="userNm != null">
+                    USER_NM=#{userNm},
+                </if>
+                <if test="userType != null">
+                    USER_TYPE=#{userType},
+                </if>
+                MOD_DT = SYSDATE
+            </set>
+        WHERE USER_ID=#{userId}
+    </update>
+
+    <!-- 회원 삭제 -->
+    <delete id="delete">
+        DELETE FROM MEMBER WHERE USER_ID=#{userId}
+    </delete>
+</mapper>
+```
+
+> resources/.../global/configs/mybatis-config.xml
+> UserType enum클래스 처리를 위한 typeHandler 추가
+
+```xml
+<configuration>
+    <properties>
+        <property name="driver" value="oracle.jdbc.driver.OracleDriver" />
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE" />
+        <property name="username" value="PROJECT2_2" />
+        <property name="password" value="oracle" />
+    </properties>
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="org.choongang.member.constants.UserType" />
+    </typeHandlers>
+  
+    ...
+</configuration>
+```
+
+#### JoinService 수정
+
+> userType 추가 처리 
+
+```java
+...
+public class JoinService implements Service<RequestJoin> {
+  ...
+
+  @Override
+  public void process(RequestJoin form) {
+    ...
+    // 데이터베이스에 영구 저장
+    UserType userType = UserType.valueOf(Objects.requireNonNullElse(form.getUserType(), UserType.STUDENT.name()));
+    Member member = Member.builder()
+            .userId(form.getUserId())
+            .userPw(userPw)
+            .userNm(form.getUserNm())
+            .userType(userType)
+            .build();
+    ...
+    
+  }
+}
+```
+
+
+
+### 회원 가입 테스트
+
+> org/choongang/member/services/JoinServiceTest.java
+> userType이 추가된 테스트 역시 통과되는지 체크한다.
+
+```java
+...
+
+public class JoinServiceTest {
+  ...
+  
+  @BeforeEach
+  void init() {
+    form = RequestJoin.builder()
+            .userId("u" + System.currentTimeMillis())
+            .userPw("12345678")
+            .confirmPw("12345678")
+            .userNm("사용자")
+            .userType(UserType.STUDENT.name())
+            .build();
+    service = MemberServiceLocator.getInstance().find(MainMenu.JOIN);
+  }
+  
+  ...
+}
+```

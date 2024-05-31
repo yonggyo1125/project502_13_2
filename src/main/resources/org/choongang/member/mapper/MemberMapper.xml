@@ -8,6 +8,7 @@
         <result column="USER_ID" property="userId" />
         <result column="USER_PW" property="userPw" />
         <result column="USER_NM" property="userNm" />
+        <result column="USER_TYPE" property="userType" />
         <result column="REG_DT" property="regDt" />
         <result column="MOD_DT" property="modDt" />
     </resultMap>
@@ -73,8 +74,8 @@
             SELECT SEQ_MEMBER.NEXTVAL FROM DUAL
         </selectKey>
 
-        INSERT INTO MEMBER (USER_NO, USER_ID, USER_PW, USER_NM)
-            VALUES (#{userNo}, #{userId}, #{userPw}, #{userNm})
+        INSERT INTO MEMBER (USER_NO, USER_ID, USER_PW, USER_NM, USER_TYPE)
+            VALUES (#{userNo}, #{userId}, #{userPw}, #{userNm}, #{userType})
     </insert>
 
     <!-- 회원 정보 수정 -->
@@ -86,6 +87,9 @@
                 </if>
                 <if test="userNm != null">
                     USER_NM=#{userNm},
+                </if>
+                <if test="userType != null">
+                    USER_TYPE=#{userType},
                 </if>
                 MOD_DT = SYSDATE
             </set>

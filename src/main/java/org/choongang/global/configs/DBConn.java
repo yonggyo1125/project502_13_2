@@ -13,8 +13,10 @@ public class DBConn {
 
     static {
         try {
+            String mode = System.getenv("mode");
+            mode = mode == null || !mode.equals("prod") ? "dev":"prod";
             Reader reader = Resources.getResourceAsReader("org/choongang/global/configs/mybatis-config.xml");
-            factory = new SqlSessionFactoryBuilder().build(reader);
+            factory = new SqlSessionFactoryBuilder().build(reader, mode);
         } catch (IOException e) {
             e.printStackTrace();
         }
