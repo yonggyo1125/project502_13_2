@@ -1,7 +1,7 @@
 package org.choongang.member.services;
 
 import org.choongang.global.Service;
-import org.choongang.global.constants.Menu;
+import org.choongang.global.constants.MainMenu;
 import org.choongang.member.controllers.RequestJoin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,7 @@ public class JoinServiceTest {
                 .confirmPw("12345678")
                 .userNm("사용자")
                 .build();
-        service = MemberServiceLocator.getInstance().find(Menu.JOIN);
+        service = MemberServiceLocator.getInstance().find(MainMenu.JOIN);
     }
 
     @Test

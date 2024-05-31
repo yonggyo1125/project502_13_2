@@ -582,11 +582,11 @@ public class MemberServiceLocator extends AbstractServiceLocator {
     }
 
     @Override
-    public Service find(Menu menu) {
+    public Service find(Menu mainMenu) {
         
         ...
 
-        switch (menu) {
+        switch (mainMenu) {
             case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
             case LOGIN: service = new LoginService(); break;
         }
@@ -779,11 +779,11 @@ public class MemberServiceLocator extends AbstractServiceLocator {
     ...
     
     @Override
-    public Service find(Menu menu) {
+    public Service find(Menu mainMenu) {
         
         ...
 
-        switch (menu) {
+        switch (mainMenu) {
             case JOIN: service = new JoinService(memberMapper(), joinValidator()); break;
             case LOGIN: service = new LoginService(memberMapper(), loginValidator()); break;
         }
@@ -798,7 +798,7 @@ public class MemberServiceLocator extends AbstractServiceLocator {
 package org.choongang.member.services;
 
 import org.choongang.global.Service;
-import org.choongang.global.constants.Menu;
+import org.choongang.global.constants.MainMenu;
 import org.choongang.member.MemberSession;
 import org.choongang.member.controllers.RequestJoin;
 import org.choongang.member.controllers.RequestLogin;
@@ -889,8 +889,42 @@ public class MainTpl implements Template {
 }
 ```
 
-## [묵찌빠 게임]()
-- 랭킹 기능 
+## [묵찌빠 게임](https://github.com/yonggyo1125/project502_13_2/tree/game)
 
-## [학생관리프로그램]()
+## [학생관리프로그램](https://github.com/yonggyo1125/project502_13_2/tree/lms)
+
+### 데이터베이스 스키마 생성
+
+- 도커 컨테이너 접속
+
+```
+docker exec -it oracle-xe /bin/bash
+```
+
+- sqlplus system 계정 접속
+
+```
+sqlplus system/oracle
+```
+
+- PROJECT2_2 사용자 및 스키마 생성 
+- CONNECT, RESOURCE 롤 권한 부여
+```
+CREATE USER PROJECT2_2 IDENTIFIED BY oracle QUOTA LIMITED ON USERS;
+GRANT CONNECT, RESOURCE TO PROJECT2_2;
+```
+
+### 서브 메뉴 분리 작업
+
+> 주 메뉴, 서브 메뉴 기본 인터페이스
+> org/choongang/global/Menu.java
+
+```java
+package org.choongang.global;
+
+public interface Menu {
+}
+```
+
+> 기 Menu
 

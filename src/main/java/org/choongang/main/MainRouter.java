@@ -3,10 +3,8 @@ package org.choongang.main;
 import org.choongang.global.Controller;
 import org.choongang.global.ControllerLocator;
 import org.choongang.global.Router;
-import org.choongang.global.constants.Menu;
+import org.choongang.global.constants.MainMenu;
 import org.choongang.main.controllers.MainController;
-import org.choongang.member.controllers.JoinController;
-import org.choongang.member.controllers.LoginController;
 import org.choongang.member.controllers.MemberControllerLocator;
 
 public class MainRouter implements Router {
@@ -24,13 +22,13 @@ public class MainRouter implements Router {
     }
 
     @Override
-    public void change(Menu menu) {
+    public void change(MainMenu mainMenu) {
         ControllerLocator memlocator = MemberControllerLocator.getInstance();
 
         Controller controller = null;
-        switch(menu) {
-            case JOIN: controller =  memlocator.find(Menu.JOIN); break;
-            case LOGIN: controller = memlocator.find(Menu.LOGIN); break;
+        switch(mainMenu) {
+            case JOIN: controller =  memlocator.find(MainMenu.JOIN); break;
+            case LOGIN: controller = memlocator.find(MainMenu.LOGIN); break;
             default: controller = new MainController();
         }
 
@@ -40,7 +38,7 @@ public class MainRouter implements Router {
     @Override
     public void start() {
         while(true) {
-            change(Menu.MAIN); // 첫 화면은 메인 컨트롤러 출력 화면
+            change(MainMenu.MAIN); // 첫 화면은 메인 컨트롤러 출력 화면
         }
     }
 }

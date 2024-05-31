@@ -1,7 +1,7 @@
 package org.choongang.member.services;
 
 import org.choongang.global.Service;
-import org.choongang.global.constants.Menu;
+import org.choongang.global.constants.MainMenu;
 import org.choongang.member.MemberSession;
 import org.choongang.member.controllers.RequestJoin;
 import org.choongang.member.controllers.RequestLogin;
@@ -24,8 +24,8 @@ public class LoginServiceTest {
          * 로그인 테스트는 회원 가입을 한 후 가입한 회원 정보로
          * 로그인이 되는지 테스트 한다. 즉, 가입먼저 시키고 테스트 진행
          */
-        joinService = MemberServiceLocator.getInstance().find(Menu.JOIN);
-        loginService = MemberServiceLocator.getInstance().find(Menu.LOGIN);
+        joinService = MemberServiceLocator.getInstance().find(MainMenu.JOIN);
+        loginService = MemberServiceLocator.getInstance().find(MainMenu.LOGIN);
 
         joinForm = RequestJoin.builder()
                 .userId("u" + System.currentTimeMillis())

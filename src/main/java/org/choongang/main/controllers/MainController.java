@@ -1,7 +1,7 @@
 package org.choongang.main.controllers;
 
 import org.choongang.global.AbstractController;
-import org.choongang.global.constants.Menu;
+import org.choongang.global.constants.MainMenu;
 import org.choongang.template.Templates;
 
 /**
@@ -13,6 +13,6 @@ public class MainController extends AbstractController {
     public void show() {
 
 
-        Templates.getInstance().render(Menu.MAIN);
+        Templates.getInstance().render(MainMenu.MAIN);
     }
 }
