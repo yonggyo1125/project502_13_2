@@ -22,7 +22,7 @@ public enum MemberType {
         return Arrays.asList(
                 new String[] {STUDENT.name(), STUDENT.title()},
                 new String[] {TEACHER.name(), TEACHER.title()},
-                new String[] {ADMIN.name(), ADMIN.title()},
+                new String[] {ADMIN.name(), ADMIN.title()}
         );
     }
 }
