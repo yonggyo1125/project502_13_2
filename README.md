@@ -913,7 +913,6 @@ sqlplus system/oracle
 CREATE USER PROJECT2_2 IDENTIFIED BY oracle QUOTA LIMITED ON USERS;
 GRANT CONNECT, RESOURCE TO PROJECT2_2;
 ```
-
 ### 서브 메뉴 분리 작업
 
 > 주 메뉴, 서브 메뉴 기본 인터페이스
@@ -923,8 +922,34 @@ GRANT CONNECT, RESOURCE TO PROJECT2_2;
 package org.choongang.global;
 
 public interface Menu {
+
 }
 ```
 
-> 기 Menu
+> 기 Menu enum 클래스명을 MainMenu로 변경하고 반영된 위치 모두 변경
+> org/choongang/global/contants/MainMenu.java 
+
+```java
+package org.choongang.global.constants;
+
+import org.choongang.global.Menu;
+
+public enum MainMenu implements Menu {
+    MAIN, // 메인 화면
+    JOIN, // 회원가입
+    LOGIN, // 로그인
+}
+```
+
+> Router 인터페이스 MainMenu -> Menu로 변경
+> org/choongang/global/Router.java
+
+```java
+public interface Router {
+    void change(Menu menu);
+
+    ...
+
+}
+```
 
