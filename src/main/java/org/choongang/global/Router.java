@@ -5,5 +5,4 @@ package org.choongang.global;
  */
 public interface Router {
     void change(Menu menu);
-    void start();
 }

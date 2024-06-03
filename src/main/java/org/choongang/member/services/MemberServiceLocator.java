@@ -48,6 +48,9 @@ public class MemberServiceLocator extends AbstractServiceLocator {
             case LOGIN: service = new LoginService(memberMapper(), loginValidator()); break;
         }
 
+
+        services.put(menu, service);
+
         return service;
     }
 }
